@@ -40,7 +40,7 @@ function addQuote() {
   quotes.push(newQuote);
   saveQuotes();
   populateCategories();
-  postQuoteToServer(newQuote); // sync new quote to server
+  postQuoteToServer(newQuote); // Sync new quote to server
   alert("Quote added successfully!");
 }
 
@@ -89,35 +89,38 @@ function importFromJsonFile(event) {
 }
 
 // -------------------- Server Sync Simulation --------------------
+const API_URL = "https://jsonplaceholder.typicode.com/posts";
 
-// Fetch quotes from mock API
+// Fetch quotes from mock API (Server → Local)
 async function fetchQuotesFromServer() {
   try {
-    const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=5");
+    const response = await fetch(API_URL + "?_limit=5");
     const serverQuotes = await response.json();
 
-    // Simulate converting server posts to quote format
     const formatted = serverQuotes.map(post => ({
       text: post.title,
       category: "Server"
     }));
 
-    // Conflict resolution: server data takes precedence
-    const combined = [...formatted, ...quotes.filter(q => q.category !== "Server")];
-    quotes = combined;
+    // Conflict resolution: server quotes override old "Server" ones
+    quotes = [
+      ...formatted,
+      ...quotes.filter(q => q.category !== "Server")
+    ];
     saveQuotes();
     populateCategories();
-    notification.textContent = "Quotes synced with server.";
-    setTimeout(() => (notification.textContent = ""), 3000);
+
+    showNotification("Quotes synced from server successfully.");
   } catch (error) {
+    showNotification("Failed to fetch quotes from server.", true);
     console.error("Error fetching quotes:", error);
   }
 }
 
-// Post new quote to mock API
+// Post new quote to mock API (Local → Server)
 async function postQuoteToServer(quote) {
   try {
-    await fetch("https://jsonplaceholder.typicode.com/posts", {
+    await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(quote)
@@ -128,8 +131,25 @@ async function postQuoteToServer(quote) {
   }
 }
 
-// -------------------- Initialize --------------------
+// -------------------- NEW: syncQuotes Function --------------------
+async function syncQuotes() {
+  showNotification("🔄 Syncing quotes with server...");
+  await fetchQuotesFromServer(); // Pull new data from server
+  saveQuotes(); // Save latest merged quotes to localStorage
+  showNotification("✅ Quotes synced successfully!");
+}
+
+// -------------------- Notifications --------------------
+function showNotification(message, isError = false) {
+  notification.textContent = message;
+  notification.style.color = isError ? "red" : "green";
+  setTimeout(() => (notification.textContent = ""), 3000);
+}
+
+// -------------------- Initialization --------------------
 populateCategories();
 showRandomQuote();
-fetchQuotesFromServer();
-setInterval(fetchQuotesFromServer, 20000); // Sync every 20 seconds
+syncQuotes(); // Perform initial sync on load
+
+// Periodic sync every 30 seconds
+setInterval(syncQuotes, 30000);
