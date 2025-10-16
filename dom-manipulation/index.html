@@ -11,10 +11,10 @@
   <!-- Category Filter -->
   <select id="categoryFilter" onchange="filterQuotes()">
     <option value="all">All Categories</option>
-    <!-- Categories will be dynamically added -->
+    <!-- Dynamically populated -->
   </select>
 
-  <!-- Display Random Quote -->
+  <!-- Quote Display -->
   <div id="quoteDisplay">Your random quote will appear here.</div>
   <button id="newQuote">Show New Quote</button>
 
@@ -30,6 +30,9 @@
     <button onclick="exportToJsonFile()">Export Quotes (JSON)</button>
     <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)">
   </div>
+
+  <!-- Notifications for sync updates -->
+  <div id="notification" style="color: red; font-weight: bold;"></div>
 
   <script src="script.js"></script>
 </body>
