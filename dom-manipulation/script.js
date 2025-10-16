@@ -28,7 +28,28 @@ function showRandomQuote() {
   sessionStorage.setItem("lastViewedQuote", JSON.stringify(randomQuote));
 }
 
-// ========== 2. Add New Quote ==========
+// ========== 2. Create Add Quote Form ==========
+function createAddQuoteForm() {
+  const container = document.getElementById("addQuoteFormContainer");
+
+  const textInput = document.createElement("input");
+  textInput.id = "newQuoteText";
+  textInput.placeholder = "Enter a new quote";
+
+  const categoryInput = document.createElement("input");
+  categoryInput.id = "newQuoteCategory";
+  categoryInput.placeholder = "Enter quote category";
+
+  const addButton = document.createElement("button");
+  addButton.textContent = "Add Quote";
+  addButton.addEventListener("click", addQuote);
+
+  container.appendChild(textInput);
+  container.appendChild(categoryInput);
+  container.appendChild(addButton);
+}
+
+// ========== 3. Add New Quote ==========
 function addQuote() {
   const textInput = document.getElementById("newQuoteText");
   const categoryInput = document.getElementById("newQuoteCategory");
@@ -53,7 +74,7 @@ function addQuote() {
   showNotification("New quote added!");
 }
 
-// ========== 3. Filter Quotes ==========
+// ========== 4. Filter Quotes ==========
 function populateCategories() {
   const uniqueCategories = ["all", ...new Set(quotes.map(q => q.category))];
   categoryFilter.innerHTML = uniqueCategories
@@ -67,12 +88,12 @@ function filterQuotes() {
   showRandomQuote();
 }
 
-// ========== 4. Local Storage ==========
+// ========== 5. Local Storage ==========
 function saveQuotes() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
 }
 
-// ========== 5. JSON Export / Import ==========
+// ========== 6. JSON Export / Import ==========
 function exportToJsonFile() {
   const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -99,12 +120,11 @@ function importFromJsonFile(event) {
   fileReader.readAsText(event.target.files[0]);
 }
 
-// ========== 6. Server Sync Simulation ==========
+// ========== 7. Server Sync Simulation ==========
 async function fetchQuotesFromServer() {
   try {
     const response = await fetch("https://jsonplaceholder.typicode.com/posts");
     const data = await response.json();
-    // Simulate new quotes
     const serverQuotes = data.slice(0, 3).map(post => ({
       text: post.title,
       category: "Server"
@@ -135,17 +155,18 @@ function syncQuotes() {
   fetchQuotesFromServer();
 }
 
-// ========== 7. Notifications ==========
+// ========== 8. Notifications ==========
 function showNotification(message, isError = false) {
   notification.textContent = message;
   notification.style.color = isError ? "red" : "green";
   setTimeout(() => (notification.textContent = ""), 3000);
 }
 
-// ========== 8. Event Listeners ==========
+// ========== 9. Event Listeners ==========
 document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 
 // Initialize app
 populateCategories();
+createAddQuoteForm();
 showRandomQuote();
 setInterval(syncQuotes, 15000); // sync every 15 seconds
