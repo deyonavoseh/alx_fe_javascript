@@ -8,31 +8,33 @@
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <!-- Category Filter -->
-  <select id="categoryFilter" onchange="filterQuotes()">
-    <option value="all">All Categories</option>
-    <!-- Dynamically populated -->
-  </select>
-
-  <!-- Quote Display -->
-  <div id="quoteDisplay">Your random quote will appear here.</div>
+  <!-- Display Random Quote -->
+  <div id="quoteDisplay"></div>
   <button id="newQuote">Show New Quote</button>
 
   <!-- Add New Quote -->
   <div>
-    <input id="newQuoteText" type="text" placeholder="Enter a new quote">
-    <input id="newQuoteCategory" type="text" placeholder="Enter quote category">
+    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
     <button onclick="addQuote()">Add Quote</button>
+  </div>
+
+  <!-- Category Filter -->
+  <div>
+    <label for="categoryFilter">Filter by Category:</label>
+    <select id="categoryFilter" onchange="filterQuotes()">
+      <option value="all">All Categories</option>
+    </select>
   </div>
 
   <!-- JSON Import / Export -->
   <div>
     <button onclick="exportToJsonFile()">Export Quotes (JSON)</button>
-    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)">
+    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
   </div>
 
-  <!-- Notifications for sync updates -->
-  <div id="notification" style="color: red; font-weight: bold;"></div>
+  <!-- Notifications (sync / conflict updates) -->
+  <div id="notification"></div>
 
   <script src="script.js"></script>
 </body>

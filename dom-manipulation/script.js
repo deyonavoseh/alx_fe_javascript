@@ -40,7 +40,7 @@ function addQuote() {
   quotes.push(newQuote);
   saveQuotes();
   populateCategories();
-  postQuoteToServer(newQuote); // Sync new quote to server
+  postQuoteToServer(newQuote);
   alert("Quote added successfully!");
 }
 
@@ -91,7 +91,6 @@ function importFromJsonFile(event) {
 // -------------------- Server Sync Simulation --------------------
 const API_URL = "https://jsonplaceholder.typicode.com/posts";
 
-// Fetch quotes from mock API (Server → Local)
 async function fetchQuotesFromServer() {
   try {
     const response = await fetch(API_URL + "?_limit=5");
@@ -110,14 +109,13 @@ async function fetchQuotesFromServer() {
     saveQuotes();
     populateCategories();
 
-    showNotification("Quotes synced from server successfully.");
+    showNotification("Quotes synced with server!"); // ✅ Added line
   } catch (error) {
     showNotification("Failed to fetch quotes from server.", true);
     console.error("Error fetching quotes:", error);
   }
 }
 
-// Post new quote to mock API (Local → Server)
 async function postQuoteToServer(quote) {
   try {
     await fetch(API_URL, {
@@ -131,15 +129,15 @@ async function postQuoteToServer(quote) {
   }
 }
 
-// -------------------- NEW: syncQuotes Function --------------------
+// -------------------- Sync Function --------------------
 async function syncQuotes() {
   showNotification("🔄 Syncing quotes with server...");
-  await fetchQuotesFromServer(); // Pull new data from server
-  saveQuotes(); // Save latest merged quotes to localStorage
-  showNotification("✅ Quotes synced successfully!");
+  await fetchQuotesFromServer();
+  saveQuotes();
+  showNotification("Quotes synced with server!"); // ✅ Explicit sync message
 }
 
-// -------------------- Notifications --------------------
+// -------------------- Notification Handler --------------------
 function showNotification(message, isError = false) {
   notification.textContent = message;
   notification.style.color = isError ? "red" : "green";
@@ -149,7 +147,7 @@ function showNotification(message, isError = false) {
 // -------------------- Initialization --------------------
 populateCategories();
 showRandomQuote();
-syncQuotes(); // Perform initial sync on load
+syncQuotes(); // Run initial sync on page load
 
 // Periodic sync every 30 seconds
 setInterval(syncQuotes, 30000);
